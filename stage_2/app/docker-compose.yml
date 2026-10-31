@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: crawler
+      POSTGRES_PASSWORD: crawler
+      POSTGRES_DB: tg_crawler
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crawler -d tg_crawler"]
+      interval: 2s
+      retries: 30
+
+  migrate:
+    build: .
+    command: alembic upgrade head
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  emulator:
+    build: ./emulator
+    ports:
+      - "8001:8001"
+
+  api:
+    build: .
+    command: uvicorn tg_crawler.asgi:app --host 0.0.0.0 --port 8000
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      emulator:
+        condition: service_started
+
+  crawler:
+    build: .
+    command: python -m tg_crawler
+    env_file: .env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      emulator:
+        condition: service_started

@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Tools
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Environment
+.env
+
+# Service files
+docs/prmt_intructions.txt
+
+# IDE
+.idea/
+.vscode/
+
+# macOS
+.DS_Store

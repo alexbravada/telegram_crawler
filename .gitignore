@@ -26,3 +26,6 @@ env/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# macOS AppleDouble
+._*
